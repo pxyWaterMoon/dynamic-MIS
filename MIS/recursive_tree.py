@@ -149,8 +149,9 @@ def create_dataset_buffer(cmp, device, times, dim_datasamples, list_G,mixed_roll
     num = find_max_list_graph(dim_datasamples)
 
     for G in list_G:
-        if show_graphs_stats:
-            print(f'Density: {G.number_of_edges() / (G.number_of_nodes() * (G.number_of_nodes() - 1)) * 2:<.3f}', G,sep=' | ')
+        # print(G)
+        # if show_graphs_stats:
+        #     print(f'Density: {G.number_of_edges() / (G.number_of_nodes() * (G.number_of_nodes() - 1)) * 2:<.3f}', G,sep=' | ')
 
         list_graphs, val = build_tree(G, cmp, device)  
         list_val.append(val)

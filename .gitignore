@@ -40,3 +40,4 @@ wisdom.fftw
 **/__pycache__/
 **/.ipynb_checkpoints/
 
+**/dataset_buffer/

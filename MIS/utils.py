@@ -13,7 +13,14 @@ def load_benchmark_data(dataset_name, dataset_path=None, idxs=(0, 100)):
         stored_dataset = open(dataset_path, 'rb')
         dataset = pickle.load(stored_dataset)
         stored_dataset.close()
-    elif dataset_name == "COLLAB" or dataset_name == 'SPECIAL' or dataset_name == 'RB':
+    elif dataset_name == "COLLAB":
+        if dataset_path is None:
+            raise Exception("dataset_path cannot be None when using the COLLAB dataset!")
+        datasetstored = TUDataset(root=dataset_path, name='COLLAB')
+        dataset = [to_networkx(datasetstored[i]) for i in range(idxs[0], idxs[1])]
+        # print(dataset)
+        return dataset
+    elif dataset_name == 'SPECIAL' or dataset_name == 'RB':
         if dataset_path is None:
             raise Exception("dataset_path cannot be None when using the COLLAB dataset!")
         stored_dataset = open(dataset_path, 'rb')
@@ -35,7 +42,8 @@ def load_benchmark_data(dataset_name, dataset_path=None, idxs=(0, 100)):
 def get_path_from_dataset_name(dataset_name):
     path = os.path.dirname(os.path.realpath(__file__))
 
-    collab_path = os.path.join(path,'dataset_buffer','collab_graphs.pickle')
+    collab_path = os.path.join(path,'dataset_buffer')
+    # collab_path = "/home/pengxy2024/dynamic-MIS/MIS/dataset_buffer/COLLAB/processed/data.pt"
     twitter_path = os.path.join(path, 'dataset_buffer', 'TWITTER_SNAP_2.p')
     special_path = os.path.join(path, 'dataset_buffer', 'special_graphs.pickle')
     rb_path = os.path.join(path,'dataset_buffer', 'rb_graphs.pickle')
