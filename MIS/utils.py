@@ -16,10 +16,7 @@ def load_benchmark_data(dataset_name, dataset_path=None, idxs=(0, 100)):
     elif dataset_name == "COLLAB":
         if dataset_path is None:
             raise Exception("dataset_path cannot be None when using the COLLAB dataset!")
-        datasetstored = TUDataset(root=dataset_path, name='COLLAB')
-        dataset = [to_networkx(datasetstored[i]) for i in range(idxs[0], idxs[1])]
-        # print(dataset)
-        return dataset
+        dataset = TUDataset(root=dataset_path, name='COLLAB')
     elif dataset_name == 'SPECIAL' or dataset_name == 'RB':
         if dataset_path is None:
             raise Exception("dataset_path cannot be None when using the COLLAB dataset!")
