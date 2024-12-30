@@ -17,7 +17,14 @@ The folder structure is the following:
   Run the following command under the folder 'MIS' for training the model for the MIS problem: `python main.py --mode [mode] --dataset_name [dataset_name]`.
 
   For MIS, the dataset names that are allowed are:
-  - TWITTER_SNAP
+  - TWITTER_SNAP  
+    This dataset can be get by run 
+    ```shell
+    $ pwd 
+    # ./MIS/dataset_buffer/
+    $ wget https://github.com/Stalence/erdos_neu/blob/main/datasets/TWITTER_SNAP_2.p
+    ``` 
+
   - COLLAB
   - RB
   - SPECIAL

@@ -41,3 +41,4 @@ wisdom.fftw
 **/.ipynb_checkpoints/
 
 **/dataset_buffer/
+**/model_parameters/
