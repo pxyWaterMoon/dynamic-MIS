@@ -12,27 +12,17 @@ def load_benchmark_data(dataset_name, dataset_path=None, idxs=(0, 100)):
             raise Exception("dataset_path cannot be None when using the TWITTER_SNAP dataset!")
         stored_dataset = open(dataset_path, 'rb')
         dataset = pickle.load(stored_dataset)
-        print("load successfully")
         stored_dataset.close()
     elif dataset_name == "COLLAB":
         if dataset_path is None:
             raise Exception("dataset_path cannot be None when using the COLLAB dataset!")
-        stored_dataset = TUDataset(root=dataset_path, name='COLLAB')
-        dataset = [to_networkx(Data(x=torch.ones(torch.max(stored_dataset[i]['edge_index'][0]) + 1, dtype=float),
-                                    edge_index=stored_dataset[i]['edge_index'])).to_undirected() for i in range(idxs[0], idxs[1])]
-        return dataset
-    elif dataset_name == 'SPECIAL':
+        dataset = TUDataset(root=dataset_path, name='COLLAB')
+    elif dataset_name == 'SPECIAL' or dataset_name == 'RB':
         if dataset_path is None:
-            raise Exception("dataset_path cannot be None when using the SPECIAL dataset!")
+            raise Exception("dataset_path cannot be None when using the COLLAB dataset!")
         stored_dataset = open(dataset_path, 'rb')
         dataset = pickle.load(stored_dataset)
-        return dataset
-    elif dataset_name == 'RB':
-        if dataset_path is None:
-            raise Exception("dataset_path cannot be None when using the RB dataset!")
-        stored_dataset = open(dataset_path, 'rb')
-        dataset = pickle.load(stored_dataset)
-        return dataset
+        return dataset[idxs[0]:idxs[1]]
     else:
         raise Exception("The provided dataset_name is not allowed")
 
@@ -42,7 +32,6 @@ def load_benchmark_data(dataset_name, dataset_path=None, idxs=(0, 100)):
                                 edge_index=dataset[i]['edge_index'])).to_undirected()
         list_G_big.append(nx_G)
 
-    print("Turned into graph network")
     return list_G_big
 
 
