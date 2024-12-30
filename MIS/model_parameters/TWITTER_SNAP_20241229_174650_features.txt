@@ -1,0 +1,1 @@
+ dataset=TWITTER_SNAP D=32 gnn_depth=3 dense_depth=4 mixed_rollout=Truedim_datasamples=128 dim_dataset=5120 root_graphs_per_iteration40 epochs=120

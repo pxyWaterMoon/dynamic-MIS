@@ -123,7 +123,7 @@ def get_indeces_dataset(dataset_name):
     if dataset_name == 'COLLAB':
         idx0 = 4000
         idx1 = 5000
-    elif dataset_name == 'TWITTER':
+    elif dataset_name == 'TWITTER_SNAP':
         idx0 = 778
         idx1 = 973
     elif dataset_name == 'RB':

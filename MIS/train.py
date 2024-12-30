@@ -52,6 +52,7 @@ def train_dataset(cmp, epochs_roll_out, optimizer, criterion, batch_size, buf, r
     model_path = os.path.join(path,'model_parameters') #path where I save the model parameters
 
     cnt = 0
+    print("Start Training")
     for i in range(0, len(root_graphs_list), root_graphs_per_iteration):
 
         list_G = root_graphs_list[i:i + root_graphs_per_iteration]
