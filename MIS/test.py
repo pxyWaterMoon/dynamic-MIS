@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from ortools.linear_solver import pywraplp
 from tqdm import tqdm
 import sys
-
+import csv
 import recursive_tree
 import model
 import networkx as nx
@@ -19,8 +19,29 @@ def test_dataset(cmp_buffer, device, D, dataset_name, optimum_mips=None, dataset
     idx0,idx1 = get_indeces_dataset(dataset_name)
     
     list_G = load_benchmark_data(dataset_name, idxs=(idx0, idx1),dataset_path=dataset_path)
-
-    gur_solver = pywraplp.Solver.CreateSolver('GUROBI')
+ 
+    if optimum_mips is None:
+        mode = 'SCIP'
+        opt_list = []
+        # if dataset_name == 'COLLAB':
+        #     with open('MIS/dataset_scip/COLLAB_SCIP.csv','r') as f:
+        #         reader = csv.reader(f)
+        #         for row in reader:
+        #             opt_list.append(float(row[0]))
+        # elif dataset_name == 'TWITTER_SNAP':
+        #     with open('MIS/dataset_scip/TWITTER_SNAP_SCIP.csv','r') as f:
+        #         reader = csv.reader(f)
+        #         for row in reader:
+        #             opt_list.append(float(row[0]))
+        for i, G in enumerate(list_G):
+            # pbar.set_description(f'|V|={G.number_of_nodes()}, |E|={G.number_of_edges()}')
+            # generate ground truth
+            or_1h, _ = solve_mis_ilp(G, time_limit_milliseconds=3600000, mode=mode)
+            opt_list.append(or_1h)
+    
+        optimum_mips = opt_list
+        print("Loaded optimum_mips from SCIP")
+    # gur_solver = pywraplp.Solver.CreateSolver('SCIP')
 
     list_random = []
     list_model_buffer = []
@@ -65,12 +86,12 @@ def test_dataset(cmp_buffer, device, D, dataset_name, optimum_mips=None, dataset
         local2_val = local_search(G, time_limit=10)
         
         # MIS FOR OR AND GUROBI SEARCH (FIX TIME)
-        or_1, _ = solve_mis_ilp(G, time_limit_milliseconds=1000, mode='SCIP')
-        or_5, _ = solve_mis_ilp(G, time_limit_milliseconds=5000, mode='SCIP')
+        # or_1, _ = solve_mis_ilp(G, time_limit_milliseconds=1000, mode='SCIP')
+        # or_5, _ = solve_mis_ilp(G, time_limit_milliseconds=5000, mode='SCIP')
         
-        gur_05, _ = solve_mis_ilp(G, time_limit_milliseconds=500, solver=gur_solver)
-        gur_1, _ = solve_mis_ilp(G, time_limit_milliseconds=1000, solver=gur_solver)
-        gur_5, _ = solve_mis_ilp(G, time_limit_milliseconds=5000, solver=gur_solver)
+        # gur_05, _ = solve_mis_ilp(G, time_limit_milliseconds=500, solver=gur_solver)
+        # gur_1, _ = solve_mis_ilp(G, time_limit_milliseconds=1000, solver=gur_solver)
+        # gur_5, _ = solve_mis_ilp(G, time_limit_milliseconds=5000, solver=gur_solver)
 
         if optimum_mips is not None:
 
@@ -78,15 +99,15 @@ def test_dataset(cmp_buffer, device, D, dataset_name, optimum_mips=None, dataset
             val_min_degree /= optimum_mips[i]
             val_model_buffer /= optimum_mips[i]
             
-            local1_val /= optimum_mips[i]
+            # local1_val /= optimum_mips[i]
             local2_val /= optimum_mips[i]
             
-            or_1 /= optimum_mips[i]
-            or_5 /= optimum_mips[i]
+            # or_1 /= optimum_mips[i]
+            # or_5 /= optimum_mips[i]
 
-            gur_05 /= optimum_mips[i]
-            gur_1 /= optimum_mips[i]
-            gur_5 /= optimum_mips[i]
+            # gur_05 /= optimum_mips[i]
+            # gur_1 /= optimum_mips[i]
+            # gur_5 /= optimum_mips[i]
 
         list_random.append(val_random)
         list_min_degree.append(val_min_degree)
@@ -94,12 +115,12 @@ def test_dataset(cmp_buffer, device, D, dataset_name, optimum_mips=None, dataset
         
         list_local_10.append(local2_val)
         
-        list_ortools_1.append(or_1)
-        list_ortools_5.append(or_5)
+        # list_ortools_1.append(or_1)
+        # list_ortools_5.append(or_5)
         
-        list_gurobi_05.append(gur_05)
-        list_gurobi_1.append(gur_1)
-        list_gurobi_5.append(gur_5)
+        # list_gurobi_05.append(gur_05)
+        # list_gurobi_1.append(gur_1)
+        # list_gurobi_5.append(gur_5)
 
     print(f"Mean ratio for random: {(np.array(list_random)).mean()} +/-  {(np.array(list_random)).std()}")
     print(f"Mean ratio for min_degree: {(np.array(list_min_degree)).mean()} +/-  {(np.array(list_min_degree)).std()}")
@@ -107,12 +128,12 @@ def test_dataset(cmp_buffer, device, D, dataset_name, optimum_mips=None, dataset
 
     print(f"Mean ratio for local (10s): {(np.array(list_local_10)).mean()} +/-  {(np.array(list_local_10)).std()}")
 
-    print(f"Mean ratio for or_1: {(np.array(list_ortools_1)).mean()} +/-  {(np.array(list_ortools_1)).std()}")
-    print(f"Mean ratio for or_5: {(np.array(list_ortools_5)).mean()} +/-  {(np.array(list_ortools_5)).std()}")
+    # print(f"Mean ratio for or_1: {(np.array(list_ortools_1)).mean()} +/-  {(np.array(list_ortools_1)).std()}")
+    # print(f"Mean ratio for or_5: {(np.array(list_ortools_5)).mean()} +/-  {(np.array(list_ortools_5)).std()}")
 
-    print(f"Mean ratio for gur_05: {(np.array(list_gurobi_05)).mean()} +/-  {(np.array(list_gurobi_05)).std()}")
-    print(f"Mean ratio for gur_1: {(np.array(list_gurobi_1)).mean()} +/-  {(np.array(list_gurobi_1)).std()}")
-    print(f"Mean ratio for gur_5: {(np.array(list_gurobi_5)).mean()} +/-  {(np.array(list_gurobi_5)).std()}")
+    # print(f"Mean ratio for gur_05: {(np.array(list_gurobi_05)).mean()} +/-  {(np.array(list_gurobi_05)).std()}")
+    # print(f"Mean ratio for gur_1: {(np.array(list_gurobi_1)).mean()} +/-  {(np.array(list_gurobi_1)).std()}")
+    # print(f"Mean ratio for gur_5: {(np.array(list_gurobi_5)).mean()} +/-  {(np.array(list_gurobi_5)).std()}")
 
     print('random: (' + str(np.array(list_time_random).mean()) + 's/g)')
     print('min_degree: (' + str(np.array(list_time_min_degree).mean()) + 's/g)')
